@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Film & TV Awards</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0A0A0A;
+      --surface: #111111;
+      --surface2: #181818;
+      --text: #FFFFFF;
+      --text-muted: #888888;
+      --accent: #C8A84C;
+      --male-bg: #0D1326;
+      --female-bg: #1A0A12;
+      --nav-h: 64px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ─── HEADER ─────────────────────────────────── */
+    .site-header {
+      text-align: center;
+      padding: 48px 20px 16px;
+      position: relative;
+    }
+    .site-header h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(32px, 6vw, 64px);
+      letter-spacing: 0.12em;
+      color: #fff;
+      text-transform: uppercase;
+    }
+    .site-header .trophy-icon {
+      font-size: 28px;
+      display: block;
+      margin-bottom: 8px;
+    }
+    .site-header p {
+      font-size: 12px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-top: 6px;
+    }
+
+    /* ─── YEAR NAV ───────────────────────────────── */
+    .year-nav-wrap {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(10,10,10,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid #1e1e1e;
+    }
+    .year-nav {
+      display: flex;
+      overflow-x: auto;
+      scrollbar-width: none;
+      gap: 4px;
+      padding: 0 16px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .year-nav::-webkit-scrollbar { display: none; }
+    .year-btn {
+      flex-shrink: 0;
+      background: transparent;
+      border: none;
+      color: #555;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      padding: 20px 16px;
+      cursor: pointer;
+      transition: color 0.2s;
+      position: relative;
+    }
+    .year-btn::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 16px; right: 16px;
+      height: 2px;
+      background: var(--accent);
+      transform: scaleX(0);
+      transition: transform 0.2s;
+    }
+    .year-btn:hover { color: #aaa; }
+    .year-btn.active { color: var(--accent); }
+    .year-btn.active::after { transform: scaleX(1); }
+
+    /* ─── CONTENT ────────────────────────────────── */
+    .year-section {
+      display: none;
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 0 16px 80px;
+      animation: fadeIn 0.35s ease;
+    }
+    .year-section.active { display: block; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ─── YEAR HERO ──────────────────────────────── */
+    .year-hero {
+      text-align: center;
+      padding: 40px 0 32px;
+    }
+    .year-hero .trophy-badge {
+      width: 48px; height: 48px;
+      border-radius: 50%;
+      background: var(--accent);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      margin-bottom: 12px;
+      box-shadow: 0 0 24px rgba(200, 168, 76, 0.5);
+    }
+    .year-hero .year-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(80px, 22vw, 140px);
+      line-height: 0.85;
+      color: var(--accent);
+      letter-spacing: 0.02em;
+      display: block;
+    }
+
+    /* ─── CATEGORY SECTION ───────────────────────── */
+    .category {
+      margin-bottom: 40px;
+    }
+    .category-title {
+      font-family: 'Oswald', sans-serif;
+      font-size: 22px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      color: #fff;
+      padding: 0 0 16px 14px;
+      position: relative;
+      border-left: 3px solid var(--accent);
+      margin-bottom: 12px;
+    }
+
+    /* ─── SECTION DIVIDER ────────────────────────── */
+    .perf-gender {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 20px 0 10px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      color: #555;
+      text-transform: uppercase;
+    }
+    .perf-gender .dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .perf-gender.male .dot { background: #5B7FCC; }
+    .perf-gender.female .dot { background: #CC5B7F; }
+
+    /* ─── MOVIE / TV CARD ────────────────────────── */
+    .card {
+      background: var(--surface);
+      border-radius: 14px;
+      padding: 20px 22px;
+      margin-bottom: 10px;
+      border: 1px solid #1e1e1e;
+      position: relative;
+      transition: border-color 0.2s;
+    }
+    .card.winner {
+      border: 1.5px solid var(--accent);
+    }
+    .card .winner-tag {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 6px;
+      display: block;
+    }
+    .card .card-title {
+      font-size: 19px;
+      font-weight: 700;
+      color: #fff;
+      line-height: 1.2;
+      margin-bottom: 8px;
+    }
+    .card .card-type {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+    .card .card-type.anime { color: #A78BFA; }
+    .trophy-orb {
+      position: absolute;
+      top: -10px; right: -6px;
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      background: var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    }
+
+    /* ─── BONUS CARD ─────────────────────────────── */
+    .card.bonus {
+      border: 1px dashed #333;
+      background: #0F0F0F;
+    }
+    .card.bonus .bonus-tag {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #F59E0B;
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    /* ─── PERFORMANCE CARD ───────────────────────── */
+    .perf-card {
+      border-radius: 14px;
+      padding: 18px 20px;
+      margin-bottom: 10px;
+      border: 1px solid transparent;
+      position: relative;
+    }
+    .perf-card.male-card { background: var(--male-bg); }
+    .perf-card.female-card { background: var(--female-bg); }
+    .perf-card.winner { border-color: var(--accent); }
+    .perf-card .winner-pill {
+      position: absolute;
+      top: 14px; right: 14px;
+      background: var(--accent);
+      color: #000;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 20px;
+    }
+    .perf-card .perf-name {
+      font-size: 18px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 4px;
+      padding-right: 70px;
+    }
+    .perf-card .perf-character {
+      font-size: 13px;
+      color: #999;
+      margin-bottom: 2px;
+    }
+    .perf-card .perf-character em {
+      font-style: normal;
+      font-weight: 400;
+      color: #666;
+      margin-right: 2px;
+    }
+    .perf-card .perf-show {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--accent);
+      margin-top: 2px;
+    }
+
+    /* ─── TIE BADGE ──────────────────────────────── */
+    .perf-card .tie-badge {
+      position: absolute;
+      top: 14px; right: 14px;
+      background: var(--accent);
+      color: #000;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 20px;
+    }
+
+    /* ─── BONUS CAMEO CARD ───────────────────────── */
+    .perf-card.bonus-cameo {
+      border: 1px dashed #333;
+      background: #0D0D10;
+    }
+    .perf-card.bonus-cameo .bonus-label {
+      display: inline-block;
+      margin-bottom: 8px;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #F59E0B;
+    }
+
+    /* ─── FOOTER ─────────────────────────────────── */
+    footer {
+      text-align: center;
+      padding: 32px 20px;
+      border-top: 1px solid #1a1a1a;
+      font-size: 12px;
+      color: #444;
+      letter-spacing: 0.05em;
+    }
+
+    /* ─── RESPONSIVE ─────────────────────────────── */
+    @media (max-width: 480px) {
+      .year-hero .year-num { font-size: 100px; }
+      .card .card-title { font-size: 17px; }
+      .perf-card .perf-name { font-size: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<header class="site-header">
+  <span class="trophy-icon">🏆</span>
+  <h1>Film &amp; TV Awards</h1>
+  <p>2018 — 2025 &nbsp;·&nbsp; Best of Cinema &amp; Television</p>
+</header>
+
+<!-- YEAR NAV -->
+<div class="year-nav-wrap">
+  <nav class="year-nav" id="yearNav">
+    <button class="year-btn active" data-year="2025" onclick="switchYear('2025',this)">2025</button>
+    <button class="year-btn" data-year="2024" onclick="switchYear('2024',this)">2024</button>
+    <button class="year-btn" data-year="2023" onclick="switchYear('2023',this)">2023</button>
+    <button class="year-btn" data-year="2022" onclick="switchYear('2022',this)">2022</button>
+    <button class="year-btn" data-year="2021" onclick="switchYear('2021',this)">2021</button>
+    <button class="year-btn" data-year="2020" onclick="switchYear('2020',this)">2020</button>
+    <button class="year-btn" data-year="2019" onclick="switchYear('2019',this)">2019</button>
+    <button class="year-btn" data-year="2018" onclick="switchYear('2018',this)">2018</button>
+  </nav>
+</div>
+
+<main id="mainContent">
+
+  <!-- ══════════════════ 2025 ══════════════════ -->
+  <section class="year-section active" id="sec-2025" style="--accent:#C8A84C;">
+    <div class="year-hero">
+      <div class="trophy-badge">🏆</div>
+      <span class="year-num">2025</span>
+    </div>
+
+    <!-- Best Movie -->
+    <div class="category">
+      <h2 class="category-title">Best Movie</h2>
+      <div class="card winner">
+        <span class="winner-tag">Winner</span>
+        <div class="card-title">Eternity</div>
+        <div class="card-type">Film</div>
+        <div class="trophy-orb">🏆</div>
+      </div>
+      <div class="card"><div class="card-title">F1</div><div class="card-type">Film</div></div>
+      <div class="card"><div class="card-title">Materialists</div><div class="card-type">Film</div></div>
+      <div class="card"><div class="card-title">The Gorge</div><div class="card-type">Film</div></div>
+    </div>
+
+    <!-- Best TV Series -->
+    <div class="category">
+      <h2 class="category-title">Best TV Series</h2>
+      <div class="card winner">
+        <span class="winner-tag">Winner</span>
+        <div class="card-title">Outlander: Blood of My Blood</div>
+        <div class="card-type">Television</div>
+        <div class="trophy-orb">🏆</div>
+      </div>
+      <div class="card"><div class="card-title">Dexter: Resurrection</div><div class="card-type">Television</div></div>
+      <div class="card"><div class="card-title">The Girlfriend</div><div class="card-type">Television</div></div>
+      <div class="card"><div class="card-title">The Bear S4</div><div class="card-type">Television</div></div>
+    </div>
+
+    <!-- Best Performance in a TV Series -->
+    <div class="category">
+      <h2 class="category-title">Best Performance in a TV Series</h2>
+
+      <div class="perf-gender male"><span class="dot"></span>Male Performance</div>
+      <div class="perf-card male-card winner">
+        <div class="winner-pill">Winner</div>
+        <div class="perf-name">John Cena</div>
+        <div class="perf-character"><em>as</em> Christopher Smith / Peacemaker</div>
+        <div class="perf-show">Peacemaker S2</div>
+      </div>
+      <div class="perf-card male-card">
+        <div class="perf-name">Penn Badgley</div>
+        <div class="perf-character"><em>as</em> Joe Goldberg</div>
+        <div class="perf-show">YOU S5</div>
+      </div>
+
+      <div class="perf-gender female"><span class="dot"></span>Female Performance</div>
+      <div class="perf-card female-card winner">
+        <div class="winner-pill">Winner</div>
+        <div class="perf-name">Hermione Corfield</div>
+        <div class="perf-character"><em>as</em> Ellen MacKenzie Fraser</div>
+        <div class="perf-show">Outlander: Blood of My Blood</div>
+      </div>
+      <div class="perf-card female-card">
+        <div class="perf-name">Rachel Sennott</div>
+        <div class="perf-character"><em>as</em> Lead</div>
+        <div class="perf-show">I Love LA</div>
+      </div>
+    </div>
+
+    <!-- Best Performance in a Movie -->
+    <div class="category">
+      <h2 class="category-title">Best Performance in a Movie</h2>
+
+      <div class="perf-gender male"><span class="dot"></span>Male Performance</div>
+      <div class="perf-card male-card winner">
+        <div class="winner-pill">Winner</div>
+        <div class="perf-name">Leonardo DiCaprio</div>
+        <div class="perf-character"><em>as</em> Frank</div>
+        <div class="perf-show">One Battle After Another</div>
+      </div>
+      <div class="perf-card male-card">
+        <div class="perf-name">Chris Evans</div>
+        <div class="perf-character"><em>as</em> John</div>
+        <div class="perf-show">Materialists</div>
+      </div>
+
+      <div class="perf-gender female"><span class="dot"></span>Female Performance</div>
+      <div class="perf-card female-card winner">
+        <div class="winner-pill">Winner</div>
+        <div class="perf-name">Jessie Buckley</div>
+        <div class="perf-character"><em>as</em> Agnes Shakespeare</div>
+        <div class="perf-show">Hamnet</div>
+      </div>
+      <div class="perf-card female-card">
+        <div class="perf-name">Elle Fanning</div>
+        <div class="perf-character"><em>as</em> Rowan</div>
+        <div class="perf-show">Predator: Badlands</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════ 2024 ══════════════════ -->
+  <section class="year-section" id="sec-2024" style="--accent:#D4950A;">
+    <div class="year-hero">
+      <div class="trophy-badge">🏆</div>
+      <span class="year-num">2024</span>
+    </div>
+
+    <!-- Best Movie -->
+    <div class="category">
+      <h2 class="category-title">Best Movie</h2>
+      <div class="card winner">
+        <span class="winner-tag">Winner</span>
+        <div class="card-title">Dune: Part Two</div>
+        <div class="card-type">Film</div>
+        <div class="trophy-orb">🏆</div>
+      </div>
+      <div class="card"><div class="card-title">The Substance</div><div class="card-type">Film</div></div>
+      <div class="card"><div class="card-title">Deadpool &amp; Wolverine</div><div class="card-type">Film</div></div>
+      <div class="card"><div class="card-title">Smile 2</div><div class="card-type">Film</div></div>
+    </div>
+
+    <!-- Best TV Series -->
+    <div class="category">
+      <h2 class="category-title">Best TV Series</h2>
+      <div class="card winner">
+        <span class="winner-tag">Winner</span>
+        <div class="card-title">The Penguin</div>
+        <div class="card-type">Television</div>
+        <div class="trophy-orb">🏆</div>
+      </div>
+      <div class="card"><div class="card-title">Alice &amp; Jack</div><div class="card-type">Television</div></div>
+      <div class="card"><div class="card-title">Landman</div><div class="card-type">Television</div></div>
+      <div class="card"><div class="card-title">The Day of the Jackal</div><div class="card-type">Television</div></div>
+    </div>
+
+    <!-- Best Performance in a TV Series -->
+    <div class="category">
+      <h2 class="category-title">Best Performance in a TV Series</h2>
+
+      <div class="perf-gender male"><span class="dot"></span>Male Performance</div>
+      <div class="perf-card male-card winner">
+        <div class="winner-pill">Winner</div>
+        <div class="perf-name">Colin Farrell</div>
+        <div class="perf-character"><em>as</em> Oz Cobb</div>
+        <div class="perf-show">The Penguin</div>
+      </div>
+      <div class="perf-card male-card">
+        <div class="perf-name">Billy Bob Thornton</div>
+        <div class="perf-character"><em>as</em> Tommy Norris</div>
+        <div class="perf-show">Landman</div>
+      </div>
+
+      <div class="perf-gender female"><span class="dot"></span>Female Performance</div>
+      <div class="perf-card female-card winner">
+        <div class="winner-pill">Winner</div>
+        <div class="perf-name">Demi Moore</div>
+        <div class="perf-character"><em>as</em> Cami</div>
+        <div class="perf-show">Landman</div>
+      </div>
+      <div class="perf-card female-card">
+        <div class="perf-name">Cristin Milioti</div>
+        <div class="perf-character"><em>as</em> Sofia Falcone</div>
+        <div class="perf-show">The Penguin</div>
+      </div>
+    </div>
+
+    <!-- Best Performance in a Movie -->
+    <div class="category">
+      <h2 class="category-title">Best Performance in a Movie</h2>
+
+      <div class="perf-gender male"><span class="dot"></span>Male Performance</div>
+      <div class="perf-card male-card winner">
+        <div class="winner-pill">Winner</div>
+        <div class="perf-name">Timothée Chalamet</div>
+        <div class="perf-character"><em>as</em> Paul Atreides</div>
+        <div class="perf-show">Dune: Part Two</div>
+      </div>
+      <div class="perf-card male-card">
+        <div class="perf-name">Ryan Reynolds</div>
+        <div class="perf-character"><em>as</em> Deadpool</div>
+        <div class="perf-show">Deadpool &amp; Wolverine</div>
+      </div>
+
+      <div class="perf-gender female"><span class="dot"></span>Female Performance</div>
+      <div class="perf-card female-card winner">
+        <div class="winner-pill">Winner</div>
+        <div class="perf-name">Naomi Scott</div>
+        <div class="perf-character"><em>as</em> Skye Riley</div>
+        <div class="perf-show">Smile 2</div>
+      </div>
+      <div class="perf-card female-card">
+        <div class="perf-name">Alisha Weir</div>
+        <div class="perf-character"><em>as</em> Abigail</div>
+        <div class="perf-show">Abigail</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════ 2023 ══════════════════ -->
+  <section class="year-section" id="sec-2023" style="--accent:#8B5CF6;">
+    <div class="year-hero">
+      <div class="trophy-badge" style="background:#8B5CF6;box-shadow:0 0 24px rgba(139,92,246,0.5);">🏆</div>
+      <span class="year-num">2023</span>
+    </div>
+
+    <!-- Best Movie -->
+    <div class="category">
+      <h2 class="category-title">Best Movie</h2>
+      <div class="card winner">
+        <span class="winner-tag">Winner</span>
+        <div class="card-title">Saltburn</div>
+        <div class="card-type">Film</div>
+        <div class="trophy-orb" style="background:#8B5CF6;box-shadow:0 4px 20px rgba(0,0,0,0.5);">🏆</div>
+      </div>
+      <div class="card"><div class="card-title">Spider-Man: Across the Spider-Verse</div><div class="card-type">Film</div></div>
+      <div class="card"><div class="card-title">The Creator</div><div class="card-type">Film</div></div>
+      <div class="card"><div class="card-title">No One Will Save You</div><div class="card-type">Film</div></div>
+    </div>
+
+    <!-- Best TV Series -->
+    <div class="category">
+      <h2 class="category-title">Best TV Series</h2>
+      <div class="card winner">
+        <span class="winner-tag">Winner</span>
+        <div class="card-title">Loki</div>
+        <div class="card-type">Television</div>
+        <div class="trophy-orb" style="background:#8B5CF6;box-shadow:0 4px 20px rgba(0,0,0,0.5);">🏆</div>
+      </div>
+      <div class="card"><div class="card-title">Beef</div><div class="card-type">Television</div></div>
+      <div class="card"><div class="card-title">The Bear S2</div><div class="card-type">Television</div></div>
+      <div class="card"><div class="card-title">Buddy Daddies</div><div class="card-type anime">Anime</div></div>
+    </div>
+
+    <!-- Best Performance in a TV Series -->
+    <div class="category">
+      <h2 class="category-title">Best Performance in a TV Series</h2>
+
+      <div class="perf-gender male"><span class="dot"></span>Male Performance</div>
+      <!-- TIE: Two co-winners -->
+      <div class="perf-card male-card winner">
+        <div class="tie-badge">Winner · Tie</div>
+        <div class="perf-name">Jeremy Allen White</div>
+        <div class="perf-character"><em>as</em> Carmy Berzatto</div>
+        <div class="perf-show">The Bear S2</div>
+      </div>
+      <div class="perf-card male-card winner">
+        <div class="tie-badge">Winner · Tie</div>
+        <div class="perf-name">Tom Hiddleston</div>
+        <div class="perf-character"><em>as</em> Loki</div>
+        <div class="perf-show">Loki S2</div>
+      </div>
+      <div class="perf-card male-card">
+        <div class="perf-name">Steven Yeun</div>
+        <div class="perf-character"><em>as</em> Danny Cho</div>
+        <div class="perf-show">Beef S1</div>
+      </div>
+      <!-- Bonus: Best Cameo -->
+      <div class="perf-card male-card bonus-cameo">
+        <span class="bonus-label">⭐ Best Cameo</span>
+        <div class="perf-name">Jon Bernthal</div>
+        <div class="perf-character"><em>as</em> Cameo Appearance</div>
+        <div class="perf-show">The Bear S2</div>
+      </div>
+
+      <div class="perf-gender female"><span class="dot"></span>Female Performance</div>
+      <div class="perf-card female-card winner">
+        <div class="winner-pill">Winner</div>
+        <div class="perf-name">Ayo Edebiri</div>
+        <div class="perf-character"><em>as</em> Sydney Adamu</div>
+        <div class="perf-show">The Bear S2</div>
+      </div>
+      <div class="perf-card female-card">
+        <div class="perf-name">Anya Chalotra</div>
+        <div class="perf-character"><em>as</em> Yennefer</div>
+        <div class="perf-show">The Witcher S3</div>
+      </div>
+    </div>
+
+    <!-- Best Performance in a Movie -->
+    <div class="category">
+      <h2 class="category-title">Best Performance in a Movie</h2>
+
+      <div class="perf-gender male"><span class="dot"></span>Male Performance</div>
+      <div class="perf-card male-card winner">
+        <div class="winner-pill">Winner</div>
+        <div class="perf-name">Barry Keoghan</div>
+        <div class="perf-character"><em>as</em> Oliver Quick</div>
+        <div class="perf-show">Saltburn</div>
+      </div>
+      <div class="perf-card male-card">
+        <div class="perf-name">Nicolas Cage</div>
+        <div class="perf-character"><em>as</em> Dracula</div>
+        <div class="perf-show">Renfield</div>
+      </div>
+
+      <div class="perf-gender female"><span class="dot"></span>Female Performance</div>
+      <div class="perf-card female-card winner">
+        <div class="winner-pill">Winner</div>
+        <div class="perf-name">Jennifer Lawrence</div>
+        <div class="perf-character"><em>as</em> Madison</div>
+        <div class="perf-show">No Hard Feelings</div>
+      </div>
+      <div class="perf-card female-card">
+        <div class="perf-name">Kaitlyn Dever</div>
+        <div class="perf-character"><em>as</em> Brynn Adams</div>
+        <div class="perf-show">No One Will Save You</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════ 2022 ══════════════════ -->
+  <section class="year-section" id="sec-2022" style="--accent:#22C55E;">
+    <div class="year-hero">
+      <div class="trophy-badge" style="background:#22C55E;box-shadow:0 0 24px rgba(34,197,94,0.5);">🏆</div>
+      <span class="year-num">2022</span>
+    </div>
+
+    <!-- Best Movie -->
+    <div class="category">
+      <h2 class="category-title">Best Movie</h2>
+      <div class="card winner">
+        <span class="winner-tag">Winner</span>
+        <div class="card-title">Everything Everywhere All at Once</div>
+        <div class="card-type">Film</div>
+        <div class="trophy-orb" style="background:#22C55E;box-shadow:0 4px 20px rgba(0,0,0,0.5);">🏆</div>
+      </div>
+      <div class="card"><div class="card-title">The Northman</div><div class="card-type">Film</div></div>
+      <div class="card"><div class="card-title">Cha Cha Real Smooth</div><div class="card-type">Film</div></div>
+      <div class="card"><div class="card-title">Top Gun: Maverick</div><div class="card-type">Film</div></div>
+      <div class="card bonus">
+        <span class="bonus-tag">⭐ Bonus</span>
+        <div class="card-title">Bullet Train</div>
+        <div class="card-type">Film</div>
+      </div>
+    </div>
+
+    <!-- Best TV Series -->
+    <div class="category">
+      <h2 class="category-title">Best TV Series</h2>
+      <div class="card winner">
+        <span class="winner-tag">Winner</span>
+        <div class="card-title">This Is Going To Hurt</div>
+        <div class="card-type">Television</div>
+        <div class="trophy-orb" style="background:#22C55E;box-shadow:0 4px 20px rgba(0,0,0,0.5);">🏆</div>
+      </div>
+      <div class="card"><div class="card-title">The Bear</div><div class="card-type">Television</div></div>
+      <div class="card"><div class="card-title">Gangs of London</div><div class="card-type">Television</div></div>
+      <div class="card"><div class="card-title">Tokyo Vice</div><div class="card-type">Television</div></div>
+    </div>
+
+    <!-- Best Performance in a TV Series -->
+    <div class="category">
+      <h2 class="category-title">Best Performance in a TV Series</h2>
+
+      <div class="perf-gender male"><span class="dot"></span>Male Performance</div>
+      <div class="perf-card male-card winner">
+        <div class="winner-pill">Winner</div>
+        <div class="perf-name">Ansel Elgort</div>
+        <div class="perf-character"><em>as</em> Jake Adelstein</div>
+        <div class="perf-show">Tokyo Vice</div>
+      </div>
+      <div class="perf-card male-card">
+        <div class="perf-name">Jeremy Allen White</div>
+        <div class="perf-character"><em>as</em> Carmy</div>
+        <div class="perf-show">The Bear</div>
+      </div>
+
+      <div class="perf-gender female"><span class="dot"></span>Female Performance</div>
+      <div class="perf-card female-card winner">
+        <div class="winner-pill">Winner</div>
+        <div class="perf-name">Zendaya</div>
+        <div class="perf-character"><em>as</em> Rue Bennett</div>
+        <div class="perf-show">Euphoria</div>
+      </div>
+      <div class="perf-card female-card">
+        <div class="perf-name">Rose Leslie</div>
+        <div class="perf-character"><em>as</em> Clare Abshire</div>
+        <div class="perf-show">Time Traveler's Wife</div>
+      </div>
+    </div>
+
+    <!-- Best Performance in a Movie -->
+    <div class="category">
+      <h2 class="category-title">Best Performance in a Movie</h2>
+
+      <div class="perf-gender male"><span class="dot"></span>Male Performance</div>
+      <div class="perf-card male-card winner">
+        <div class="winner-pill">Winner</div>
+        <div class="perf-name">Robert Pattinson</div>
+        <div class="perf-character"><em>as</em> Bruce Wayne</div>
+        <div class="perf-show">The Batman</div>
+      </div>
+      <div class="perf-card male-card">
+        <div class="perf-name">Brad Pitt</div>
+        <div class="perf-character"><em>as</em> Ladybug</div>
+        <div class="perf-show">Bullet Train</div>
+      </div>
+
+      <div class="perf-gender female"><span class="dot"></span>Female Performance</div>
+      <div class="perf-card female-card winner">
+        <div class="winner-pill">Winner</div>
+        <div class="perf-name">Michelle Yeoh</div>
+        <div class="perf-character"><em>as</em> Evelyn Wang</div>
+        <div class="perf-show">Everything Everywhere All at Once</div>
+      </div>
+      <div class="perf-card female-card">
+        <div class="perf-name">Dakota Johnson</div>
+        <div class="perf-character"><em>as</em> Anne Elliot</div>
+        <div class="perf-show">Persuasion</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════ 2021 ══════════════════ -->
+  <section class="year-section" id="sec-2021" style="--accent:#EC4899;">
+    <div class="year-hero">
+      <div class="trophy-badge" style="background:#EC4899;box-shadow:0 0 24px rgba(236,72,153,0.5);">🏆</div>
+      <span class="year-num">2021</span>
+    </div>
+
+    <!-- Best Movie -->
+    <div class="category">
+      <h2 class="category-title">Best Movie</h2>
+      <div class="card winner">
+        <span class="winner-tag">Winner</span>
+        <div class="card-title">Last Night in Soho</div>
+        <div class="card-type">Film</div>
+        <div class="trophy-orb" style="background:#EC4899;box-shadow:0 4px 20px rgba(0,0,0,0.5);">🏆</div>
+      </div>
+      <div class="card"><div class="card-title">Cruella</div><div class="card-type">Film</div></div>
+      <div class="card"><div class="card-title">Dune</div><div class="card-type">Film</div></div>
+      <div class="card"><div class="card-title">Spider-Man: No Way Home</div><div class="card-type">Film</div></div>
+    </div>
+
+    <!-- Best TV Series -->
+    <div class="category">
+      <h2 class="category-title">Best TV Series</h2>
+      <div class="card winner">
+        <span class="winner-tag">Winner</span>
+        <div class="card-title">Maid</div>
+        <div class="card-type">Television</div>
+        <div class="trophy-orb" style="background:#EC4899;box-shadow:0 4px 20px rgba(0,0,0,0.5);">🏆</div>
+      </div>
+      <div class="card"><div class="card-title">Dexter: New Blood</div><div class="card-type">Television</div></div>
+      <div class="card"><div class="card-title">Mare of Easttown</div><div class="card-type">Television</div></div>
+      <div class="card"><div class="card-title">Squid Game</div><div class="card-type">Television</div></div>
+    </div>
+
+    <!-- Best Performance in a TV Series -->
+    <div class="category">
+      <h2 class="category-title">Best Performance in a TV Series</h2>
+
+      <div class="perf-gender male"><span class="dot"></span>Male Performance</div>
+      <div class="perf-card male-card winner">
+        <div class="winner-pill">Winner</div>
+        <div class="perf-name">Henry Cavill</div>
+        <div class="perf-character"><em>as</em> Geralt of Rivia</div>
+        <div class="perf-show">The Witcher S2</div>
+      </div>
+
+      <div class="perf-gender female"><span class="dot"></span>Female Performance</div>
+      <div class="perf-card female-card winner">
+        <div class="winner-pill">Winner</div>
+        <div class="perf-name">Margaret Qualley</div>
+        <div class="perf-character"><em>as</em> Alex Russell</div>
+        <div class="perf-show">Maid</div>
+      </div>
+    </div>
+
+    <!-- Best Performance in a Movie -->
+    <div class="category">
+      <h2 class="category-title">Best Performance in a Movie</h2>
+
+      <div class="perf-gender male"><span class="dot"></span>Male Performance</div>
+      <div class="perf-card male-card winner">
+        <div class="winner-pill">Winner</div>
+        <div class="perf-name">Mads Mikkelsen</div>
+        <div class="perf-character"><em>as</em> Martin</div>
+        <div class="perf-show">Another Round</div>
+      </div>
+
+      <div class="perf-gender female"><span class="dot"></span>Female Performance</div>
+      <div class="perf-card female-card winner">
+        <div class="winner-pill">Winner</div>
+        <div class="perf-name">Emma Stone</div>
+        <div class="perf-character"><em>as</em> Cruella de Vil</div>
+        <div class="perf-show">Cruella</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════ 2020 ══════════════════ -->
+  <section class="year-section" id="sec-2020" style="--accent:#38BDF8;">
+    <div class="year-hero">
+      <div class="trophy-badge" style="background:#38BDF8;box-shadow:0 0 24px rgba(56,189,248,0.5);">🏆</div>
+      <span class="year-num">2020</span>
+    </div>
+
+    <!-- Best Movie -->
+    <div class="category">
+      <h2 class="category-title">Best Movie</h2>
+      <div class="card winner">
+        <span class="winner-tag">Winner</span>
+        <div class="card-title">Tenet</div>
+        <div class="card-type">Film</div>
+        <div class="trophy-orb" style="background:#38BDF8;box-shadow:0 4px 20px rgba(0,0,0,0.5);">🏆</div>
+      </div>
+      <div class="card"><div class="card-title">Simple Passion</div><div class="card-type">Film</div></div>
+      <div class="card"><div class="card-title">Birds of Prey</div><div class="card-type">Film</div></div>
+      <div class="card"><div class="card-title">The Old Guard</div><div class="card-type">Film</div></div>
+    </div>
+
+    <!-- Best TV Series -->
+    <div class="category">
+      <h2 class="category-title">Best TV Series</h2>
+      <div class="card winner">
+        <span class="winner-tag">Winner</span>
+        <div class="card-title">Normal People</div>
+        <div class="card-type">Television</div>
+        <div class="trophy-orb" style="background:#38BDF8;box-shadow:0 4px 20px rgba(0,0,0,0.5);">🏆</div>
+      </div>
+      <div class="card"><div class="card-title">Westworld</div><div class="card-type">Television</div></div>
+      <div class="card"><div class="card-title">The Queen's Gambit</div><div class="card-type">Television</div></div>
+      <div class="card"><div class="card-title">The Haunting of Bly Manor</div><div class="card-type">Television</div></div>
+    </div>
+  </section>
+
+  <!-- ══════════════════ 2019 ══════════════════ -->
+  <section class="year-section" id="sec-2019" style="--accent:#F97316;">
+    <div class="year-hero">
+      <div class="trophy-badge" style="background:#F97316;box-shadow:0 0 24px rgba(249,115,22,0.5);">🏆</div>
+      <span class="year-num">2019</span>
+    </div>
+
+    <!-- Best Movie -->
+    <div class="category">
+      <h2 class="category-title">Best Movie</h2>
+      <div class="card winner">
+        <span class="winner-tag">Winner</span>
+        <div class="card-title">Avengers: Endgame</div>
+        <div class="card-type">Film</div>
+        <div class="trophy-orb" style="background:#F97316;box-shadow:0 4px 20px rgba(0,0,0,0.5);">🏆</div>
+      </div>
+      <div class="card"><div class="card-title">Ad Astra</div><div class="card-type">Film</div></div>
+      <div class="card"><div class="card-title">Joker</div><div class="card-type">Film</div></div>
+      <div class="card"><div class="card-title">Last Christmas</div><div class="card-type">Film</div></div>
+    </div>
+
+    <!-- Best TV Series -->
+    <div class="category">
+      <h2 class="category-title">Best TV Series</h2>
+      <div class="card winner">
+        <span class="winner-tag">Winner</span>
+        <div class="card-title">Mr. Robot S4</div>
+        <div class="card-type">Television</div>
+        <div class="trophy-orb" style="background:#F97316;box-shadow:0 4px 20px rgba(0,0,0,0.5);">🏆</div>
+      </div>
+      <div class="card"><div class="card-title">YOU</div><div class="card-type">Television</div></div>
+      <div class="card"><div class="card-title">The Witcher</div><div class="card-type">Television</div></div>
+      <div class="card"><div class="card-title">Doom Patrol</div><div class="card-type">Television</div></div>
+    </div>
+  </section>
+
+  <!-- ══════════════════ 2018 ══════════════════ -->
+  <section class="year-section" id="sec-2018" style="--accent:#EF4444;">
+    <div class="year-hero">
+      <div class="trophy-badge" style="background:#EF4444;box-shadow:0 0 24px rgba(239,68,68,0.5);">🏆</div>
+      <span class="year-num">2018</span>
+    </div>
+
+    <!-- Best Movie -->
+    <div class="category">
+      <h2 class="category-title">Best Movie</h2>
+      <div class="card winner">
+        <span class="winner-tag">Winner</span>
+        <div class="card-title">Mamma Mia! Here We Go Again</div>
+        <div class="card-type">Film</div>
+        <div class="trophy-orb" style="background:#EF4444;box-shadow:0 4px 20px rgba(0,0,0,0.5);">🏆</div>
+      </div>
+      <div class="card"><div class="card-title">Hereditary</div><div class="card-type">Film</div></div>
+    </div>
+
+    <!-- Best TV Series -->
+    <div class="category">
+      <h2 class="category-title">Best TV Series</h2>
+      <div class="card winner">
+        <span class="winner-tag">Winner</span>
+        <div class="card-title">YOU S1</div>
+        <div class="card-type">Television</div>
+        <div class="trophy-orb" style="background:#EF4444;box-shadow:0 4px 20px rgba(0,0,0,0.5);">🏆</div>
+      </div>
+      <div class="card"><div class="card-title">Killing Eve S1</div><div class="card-type">Television</div></div>
+      <div class="card bonus">
+        <span class="bonus-tag">⭐ Bonus</span>
+        <div class="card-title">Mr Inbetween S1</div>
+        <div class="card-type">Television</div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <p>Film &amp; TV Awards &nbsp;·&nbsp; 2018 – 2025 &nbsp;·&nbsp; All Rights Reserved</p>
+</footer>
+
+<script>
+  function switchYear(year, btn) {
+    // Hide all sections
+    document.querySelectorAll('.year-section').forEach(s => s.classList.remove('active'));
+    // Show target
+    const target = document.getElementById('sec-' + year);
+    if (target) target.classList.add('active');
+
+    // Update nav buttons
+    document.querySelectorAll('.year-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    // Scroll nav button into view
+    btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+
+    // Scroll to top of content
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // Keyboard navigation
+  document.addEventListener('keydown', function(e) {
+    const years = ['2025','2024','2023','2022','2021','2020','2019','2018'];
+    const active = document.querySelector('.year-btn.active');
+    if (!active) return;
+    const idx = years.indexOf(active.dataset.year);
+    if (e.key === 'ArrowRight' && idx < years.length - 1) {
+      const next = document.querySelector('.year-btn[data-year="' + years[idx+1] + '"]');
+      if (next) switchYear(years[idx+1], next);
+    } else if (e.key === 'ArrowLeft' && idx > 0) {
+      const prev = document.querySelector('.year-btn[data-year="' + years[idx-1] + '"]');
+      if (prev) switchYear(years[idx-1], prev);
+    }
+  });
+</script>
+</body>
+</html>
